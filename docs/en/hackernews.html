@@ -1,0 +1,345 @@
+<!DOCTYPE html><html lang="en"><head><title>lemon.js</title>
+<link rel='stylesheet' type='text/css' href='/bundle/0c69a41e257c8f5a23847780b629d0186cebdafb.css'></head><body><div id="app" class="" lemon-component="site.App" lemon-data="0"><div id="header" class="" lemon-component="site.Header" lemon-data="1"><div class=" lui-header" lemon-component="lui.Header" lemon-data="2"><a class="logo" href="/">lemon</a><div class="nav lui-header-menu" lemon-component="lui.HeaderMenu" lemon-data="3"><div><ul lemon-ref="$menu"><li><a href="/en">Home</a></li><li><a href="/en/clock">Tutorial</a></li><li><a href="/en/api">API</a></li><li><a href="/en/how-to">How To</a></li><li><a href="/en/examples">Examples</a></li><li><a href="https://chat.lemonjs.org">Chat</a></li><li><a href="https://github.com/lemon/lemonjs-cli">Github</a></li><div class="line" lemon-ref="$line"></div></ul></div></div></div></div><div class="" lemon-component="lemon.Router" lemon-data="4"><div class="" lemon-component="site.HackerNewsTutorial" lemon-data="5"><div class=" lui-banner" lemon-component="lui.Banner" lemon-data="6"><h1>Advanced Tutorial: HackerNews</h1><p>In this tutorial, you will build an app with multiple views, remote data loading, and routing.</p></div><div class=" lui-story" lemon-component="lui.Story" lemon-data="7"><div class="lui-story-sidebar" lemon-ref="$sidebar"><div lemon-bind:list="nav" lemon-bind:template="8"></div></div><div class="lui-story-content"><div class="" lemon-component="lui.Markdown" lemon-data="9"><p>This is the HackerNews demo for Lemon.js. If you&#39;re coming from Vue.js,
+it will look very familiar to you.</p>
+<h1><a href="/en/hackernews?q=installation">Installation</a></h1>
+<pre><code class="language-bash"># install lemon-cli globally with npm
+&gt; npm install -g lemonjs-cli</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=create">Create the project</a></h1>
+<pre><code class="language-bash"># create a directory for your new project
+&gt; mkdir -p ~/hackernews
+&gt; cd ~/hackernews
+
+# create your new project from an existing lemon template
+&gt; lemon new hackernews</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=structure">Project Structure</a></h1>
+<pre><code class="language-bash"># quick glance at the project structure
+&gt; find .
+.
+./README.md           # project README
+./data                # data files
+./lemon.cson          # contains your lemon config file
+./src                 # source code
+./src/App.coffee      # main App
+./src/components      # directory for components
+./src/css             # directory for stylesheets
+./src/index.coffee    # index.html template
+./src/lib             # utility libraries
+./src/static          # directory for static files
+./src/views           # directory for routable views</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=config">Project Configuration</a></h1>
+<h3>(lemon.cson)</h3>
+<pre><code class="language-coffeescript">{
+  name: &quot;Lemon HackerNews Tutorial&quot;
+  prod: {
+    hostname: &#39;hackernews.lemonjs.org&#39;
+  }
+  dev: {
+    port: 3000
+  }
+  deploy: {
+    service: &#39;github&#39;
+  }
+}</code></pre>
+<p>&#39;prod.hostname&#39; is the url your site will eventually be located at. This
+property is available anywhere in your application as site.hostname. &#39;name&#39; is
+the name of your project. &#39;dev.port&#39; is the port that your local development
+server will use. &quot;deploy.service&quot; will be the service you plan to deploy
+your app to.</p>
+<hr>
+<h1><a href="/en/hackernews?q=index">index.html template</a></h1>
+<p>lemon apps can have multiple root html template files, but a majority of
+apps will just use a single one. We can set any properties we want, and
+then load our site.App into the body.</p>
+<pre><code class="language-coffeescript"># dependencies
+require &#39;./App&#39;
+
+# page template
+module.exports = -&gt;
+  doctype 5
+  html lang: &#39;en&#39;, -&gt;
+    head -&gt;
+      title -&gt; &#39;HackerNews on lemon&#39;
+      meta charset: &quot;utf-8&quot;
+      meta name: &quot;mobile-web-app-capable&quot;, content: &quot;yes&quot;
+      meta name: &quot;apple-mobile-web-app-capable&quot;, content: &quot;yes&quot;
+      meta name: &quot;apple-mobile-web-app-status-bar-style&quot;, content: &quot;default&quot;
+      link rel: &quot;apple-touch-icon&quot;, sizes:&quot;144x144&quot;, href: &quot;/img/logo-144.png&quot;
+      meta name: &quot;viewport&quot;, content:&quot;width=device-width, initial-scale=1, minimal-ui&quot;
+      link rel: &quot;shortcut icon&quot;, sizes: &quot;64x64&quot;, href: &quot;/img/icon-64.png&quot;
+      link rel: &quot;manifest&quot;, href: &quot;/manifest.json&quot;
+    body -&gt;
+      site.App()</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=app">App.coffee</a></h1>
+<p>Here we load our libs, components, views, and stylesheets. We place
+the header at the top, and then use a lemon.Router to control which
+content to load based on the url.</p>
+<p>We use beforeRoute to only re-render this content if the &quot;action&quot; changes.
+The action is the function the route pattern is mapped to. For example, if
+a user goes from a user page to an item page, the router will re-render.
+However, if a user goes from /top to /new, the router does NOT re-render.
+We leave it to the NewsView to decide what to do.</p>
+<p>After routing, we scroll to the top of the page.</p>
+<pre><code class="language-coffeescript">
+# dependencies
+require &#39;./components/Header&#39;
+require &#39;./lib/Api&#39;
+require &#39;./lib/Utils&#39;
+require &#39;./views/ItemView&#39;
+require &#39;./views/NewsView&#39;
+require &#39;./views/PageNotFoundView&#39;
+require &#39;./views/UserView&#39;
+
+# stylesheets
+require &#39;./css/App.styl&#39;
+
+# component
+module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;App&#39;
+  id: &#39;app&#39;
+
+  lifecycle: {
+    created: -&gt;
+      site.api = new site.Api()
+      site.utils = new site.Utils()
+  }
+
+  template: (data) -&gt;
+    site.Header()
+    lemon.Router {
+      beforeRoute: (current, prev) -&gt;
+        return current.action isnt prev.action
+      routes: {
+        &#39;/&#39;: -&gt; lemon.route &#39;/top&#39;
+        &#39;/(top|new|show|ask|jobs):type/*page&#39;: site.NewsView
+        &#39;/user/:id&#39;: site.UserView
+        &#39;/item/:id&#39;: site.ItemView
+        &#39;/*&#39;: site.PageNotFoundView
+      }
+      routed: -&gt;
+        lemon.scrollTo document.body
+    }
+}</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=components">Components</a></h1>
+<p>Notice that in the template, we use &quot;site.Header()&quot; to render the header at a
+specific location. We use &quot;site.UserView&quot; (without calling the function) to set
+a component to a route. In these common scenarios, we don&#39;t use the &quot;new&quot;
+keyword. This will render a temporary dom element to the page. After render is
+complete, the template is then hydrated. During hydration, this dom element
+stub will be recognized, and a full component will be loaded and rendered into
+it.</p>
+<p>In our lifecycle hook, we do &quot;new site.Api()&quot; and &quot;new site.Utils()&quot;. In this
+case, we use the &quot;new&quot; keyword so that the component is immediately created and
+returned, instead of a dom element. No dom was passed in, so this component
+will not be attached to the DOM.</p>
+<hr>
+<h1><a href="/en/hackernews?q=api">API</a></h1>
+<p>Our API is similar to other components, except that we don&#39;t expect it
+to be rendered to the dom. The data for our API contains the api root url
+and a data cache. We use lemon.ajax to load the content from firebase.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;Api&#39;
+
+  data: {
+    cache: {}
+    root: &#39;https://hacker-news.firebaseio.com/v0&#39;
+  }
+
+  methods: {
+
+    fetch: (key, next) -&gt;
+      return setTimeout(( =&gt; next null, @cache[key]), 1) if @cache[key]
+      lemon.ajax {
+        method: &#39;GET&#39;
+        url: &quot;#{@root}/#{key}.json&quot;
+      }, (err, data) =&gt;
+        @cache[key] = data
+        next err, data
+
+    fetchItem: (id, next) -&gt;
+      @fetch &quot;item/#{id}&quot;, next
+
+    fetchStories: (type, next) -&gt;
+      type = &#39;job&#39; if type is &#39;jobs&#39;
+      @fetch &quot;#{type}stories&quot;, next
+
+    fetchUser: (id, next) -&gt;
+      @fetch &quot;/user/#{id}&quot;, next
+
+  }
+}</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=user-view">A Simple View (UserView)</a></h1>
+<p>Our UserView is quite simple (no dependencies).</p>
+<p>First we define our data (state/props). We&#39;re going to load external
+data, so we have a &quot;loading&quot; property. Then we track an &quot;error&quot; and &quot;user&quot;
+property based on if we load our external data successfully.</p>
+<p>We add a lifecycle hook to know when the component has been mounted, then
+we use our &quot;site.api&quot; to fetch our data. When we get our response, we update
+the error and user properties, then update loading to false.</p>
+<p>In our template, we use binding on the &quot;loading&quot; property, so as soon as
+we update &quot;loading&quot;, that dom element and template will re-render and
+re-hydrate. Then we decide whether to show an error or the user details.</p>
+<pre><code class="language-coffeescript">
+# stylesheets
+require &#39;../css/UserView.styl&#39;
+
+module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;UserView&#39;
+  class: &#39;view&#39;
+
+  data: {
+    loading: true
+    error: null
+    user: null
+  }
+
+  lifecycle: {
+    mounted: -&gt;
+      site.api.fetchUser @params.id, (err, user) =&gt;
+        @error = err
+        @user = user
+        @loading = false
+        setTimeout ( =&gt; lemon.addClass @el, &#39;loaded&#39; ), 10
+  }
+
+  template: (data) -&gt;
+    div &#39;.user-view&#39;, -&gt;
+      div _on: &#39;loading&#39;, _template: (loading, data) -&gt;
+        {error, user} = data
+        if error
+          div &#39;.error&#39;, -&gt;
+            error
+        else if user
+          h1 -&gt; &quot;User: #{user.id}&quot;
+          ul &#39;.meta&#39;, -&gt;
+            li -&gt;
+              span &#39;.label&#39;, -&gt; &#39;Created:&#39;
+              span &#39;.value&#39;, -&gt; site.utils.timeAgo user.created
+            li -&gt;
+              span &#39;.label&#39;, -&gt; &#39;Karma:&#39;
+              span &#39;.value&#39;, -&gt; &quot;#{user.karma}&quot;
+          div &#39;.about&#39;, -&gt;
+            raw user.about
+          div &#39;.links&#39;, -&gt;
+            a href: &quot;https://news.ycombinator.com/submitted?id=#{user.id}&quot;, -&gt;
+              &#39;submissions&#39;
+            text &quot; | &quot;
+            a hreF: &quot;https://news.ycombinator.com/threads?id=#{user.id}&quot;, -&gt;
+              &#39;comments&#39;
+}</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=news-view">A Complex View (NewsView)</a></h1>
+<p>NewsView is a little more complex because it includes routing. NewsView depends
+on a NewsItem component, so first we load that and our css. Our NewsView has
+extra data to assist us with paging our application.</p>
+<p>We add a route similar to what was in our site.App. This listens for changes
+in the url so we can track which type of news we&#39;re trying to load and which
+page should be loaded. When a route matches our pattern, the &quot;onRoute&quot; method
+is called.</p>
+<p>The params are nicely available in our &quot;onRoute&quot; method. We set &quot;@loading&quot; to
+false and our dom re-renders. We load the data we need, update our state, then
+set &quot;@loading&quot; to true and that part of the dom re-renders as well. We are
+using binding twice on the &quot;loading&quot; property. Once within the navigation, and
+the other for the content below. This allows us to not re-render the entire nav
+element when updating.</p>
+<pre><code class="language-coffeescript">
+# dependencies
+require &#39;../components/NewsItem&#39;
+
+# stylesheets
+require &#39;../css/NewsView.styl&#39;
+
+module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;NewsView&#39;
+  class: &#39;view&#39;
+
+  data: {
+    error: null
+    ids: []
+    loading: true
+    num_pages: 1
+    page: 1
+    page_size: 20
+    type: null
+  }
+
+  methods: {
+
+    onRoute: ({params}) -&gt;
+      page = parseInt(params.page) or 1
+      type = params.type or &#39;new&#39;
+      start = @page_size * (page-1)
+      end = @page_size * page
+      @loading = true
+      site.api.fetchStories type, (err, ids) =&gt;
+        @error = err
+        @ids = ids[start...end]
+        @page = page
+        @type = type
+        @num_pages = Math.ceil ids.length / @page_size
+        @loading = false
+        setTimeout ( =&gt; lemon.addClass @el, &#39;loaded&#39; ), 10
+  }
+
+  routes: {
+    &#39;/(top|new|show|ask|jobs):type/*page&#39;: &#39;onRoute&#39;
+  }
+
+  template: -&gt;
+    div &#39;.view-nav&#39;, -&gt;
+      span _on: &#39;loading&#39;, _template: (loading, data) -&gt;
+        a {
+          class: {disabled: data.page is 1}
+          href: &quot;/#{data.type}/#{data.page - 1}&quot;
+        }, -&gt;
+          &#39;&lt; prev&#39;
+        span -&gt;
+          text &quot;#{data.page}/&quot;
+          text &quot;#{data.num_pages}&quot;
+        a {
+          class: {disabled: data.page is data.num_pages}
+          href: &quot;/#{data.type}/#{data.page + 1}&quot;
+        }, -&gt;
+          &#39;more &gt;&#39;
+
+    div &#39;.news-list&#39;, _on: &#39;loading&#39;, _template: (loading, data) -&gt;
+      {error, ids} = data
+      if error
+        div &#39;.error&#39;, -&gt;
+          error
+      else if ids
+        for id in ids
+          site.NewsItem {item_id: id}
+  }</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=styling">Styling</a></h1>
+<p>You probably noticed we&#39;re been requiring stylus files. Lemon supports css
+and stylus by default. Lemon will hot-reload our page when these files change
+and will compile and bundle them together for us when we build our app. I&#39;ll
+assume you know css and we don&#39;t need to go through the source code.</p>
+<hr>
+<h1><a href="/en/hackernews?q=dev">Run the Development Server</a></h1>
+<pre><code class="language-bash">&gt; lemon dev
+listening at http://localhost:3000</code></pre>
+<hr>
+<h1><a href="/en/hackernews?q=done">That&#39;s it!</a></h1>
+<p>That&#39;s all! This app was built with lemon build and then deployed to github
+pages using lemon deploy. Note that because this a static hosted version, it
+can only provide server-side rendering for the primary pages (/top, /new, etc.)
+because we can&#39;t know which item ids and user ids will exist in the future.</p>
+<p>A next step would be to create a simple local server, listen for the desired
+routes, load data from firebase in the request handler, and then call
+lemon.compile to render our html server-side with dynamically loaded data.</p>
+<p>We&#39;ll save that for another day though.</p>
+<p><a href="https://hackernews.lemonjs.org">https://hackernews.lemonjs.org</a></p>
+</div></div></div></div></div><div id="footer" class="" lemon-component="site.Footer" lemon-data="10"><div class=" lui-footer" lemon-component="lui.Footer" lemon-contents="11" lemon-data="12"><div>Released under the MIT License</div><div>Copyright © 2018 Shenzhen239</div><div><a href="https://icons8.com">Icon pack by Icons8</a></div><div style="display: none"><a href="/zh"><img src="https://png.icons8.com/office/40/000000/china.png" /></a><a href="/fr"><img src="https://png.icons8.com/office/40/000000/france.png" /></a><a href="/en"><img src="https://png.icons8.com/office/40/000000/usa.png" /></a></div></div></div></div>
+<script type='text/javascript' src='/bundle/0ecd4f115d863ab49ebd03db92c5c77f3a1d1f0a.js'></script></body></html>

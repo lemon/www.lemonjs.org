@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="en"><head><title>lemon.js</title>
+<link rel='stylesheet' type='text/css' href='/bundle/0c69a41e257c8f5a23847780b629d0186cebdafb.css'></head><body><div id="app" class="" lemon-component="site.App" lemon-data="0"><div id="header" class="" lemon-component="site.Header" lemon-data="1"><div class=" lui-header" lemon-component="lui.Header" lemon-data="2"><a class="logo" href="/">lemon</a><div class="nav lui-header-menu" lemon-component="lui.HeaderMenu" lemon-data="3"><div><ul lemon-ref="$menu"><li><a href="/en">Home</a></li><li><a href="/en/clock">Tutorial</a></li><li><a href="/en/api">API</a></li><li><a href="/en/how-to">How To</a></li><li><a href="/en/examples">Examples</a></li><li><a href="https://chat.lemonjs.org">Chat</a></li><li><a href="https://github.com/lemon/lemonjs-cli">Github</a></li><div class="line" lemon-ref="$line"></div></ul></div></div></div></div><div class="" lemon-component="lemon.Router" lemon-data="4"><div class="" lemon-component="site.ClockTutorial" lemon-data="5"><div class=" lui-banner" lemon-component="lui.Banner" lemon-data="6"><h1>Tutorial: Clock</h1><p>In this section, you will learn the basics; installing lemon, creating a project, and running your lemon dev server. The end result will be an in-browser ticking clock.</p><a href="/en/hackernews">Click here for the Advanced tutorial</a></div><div class=" lui-story" lemon-component="lui.Story" lemon-data="7"><div class="lui-story-sidebar" lemon-ref="$sidebar"><div lemon-bind:list="nav" lemon-bind:template="8"></div></div><div class="lui-story-content"><div class="" lemon-component="lui.Markdown" lemon-data="9"><h1><a href="/en/clock?q=installation">Installation</a></h1>
+<pre><code class="language-bash"># install lemon-cli globally with npm
+&gt; npm install -g lemonjs-cli</code></pre>
+<hr>
+<h1><a href="/en/clock?q=create">Create a Project</a></h1>
+<pre><code class="language-bash"># create a directory for your new project
+&gt; mkdir -p ~/lemon-clock
+&gt; cd ~/lemon-clock
+
+# create your new project from an existing lemon template
+&gt; lemon new clock-clock-app</code></pre>
+<hr>
+<h1><a href="/en/clock?q=structure">Project Structure</a></h1>
+<pre><code class="language-bash"># quick glance at the project structure
+&gt; find .
+.
+./lemon.cson          # contains your lemon config file
+./README.md           # project README
+./src                 # src directory
+./src/App.coffee      # your app
+./src/App.css         # styling (for big projects, create a &quot;css&quot; directory)
+./src/index.coffee    # your index.html</code></pre>
+<hr>
+<h1><a href="/en/clock?q=config">Project Configuration</a></h1>
+<h3>(lemon.cson)</h3>
+<pre><code class="language-coffeescript">{
+  name: &quot;Lemon clock&quot;                # a name for your app
+  dev: {
+    port: 3000                       # local development port
+  }
+  prod: {
+    hostname: &#39;clock.lemonjs.org&#39;    # where you app will be deployed
+  }
+}</code></pre>
+<p>&#39;prod.hostname&#39; is the url your site will eventually be located at. This
+property is available anywhere in your application as site.hostname. &#39;name&#39; is
+the name of your project. &#39;dev.port&#39; is the port that your local development
+server will use.</p>
+<p><a href="https://github.com/bevry/cson">Learn More About CSON</a></p>
+<hr>
+<h1><a href="/en/clock?q=index">Index.html Entrypoint</a></h1>
+<h3>(src/index.coffee)</h3>
+<pre><code class="language-coffeescript"># dependencies
+require &#39;./App&#39;               # load your App component
+
+# page template
+module.exports = -&gt;           # export your template
+  doctype 5                   # use html5 doctype
+  html -&gt;
+    head -&gt;
+      title &#39;Lemon clock&#39;  # browser title
+    body -&gt;
+      site.App()              # load your App into body</code></pre>
+<p>Notice how we access our App with &quot;site.App&quot;. Most, if not all,
+components should be namespaced this way. In App.coffee, you&#39;ll
+see how we define the namespace.</p>
+<p>This template probably reminds you of html. This is coffeescript templating. It
+looks beautiful and it&#39;s incredibly easy and flexible to work with. You may
+have noticed what we&#39;re actually doing is calling functions with the names
+&#39;doctype&#39;, &#39;html&#39;, &#39;head&#39;, &#39;title&#39;, and &#39;site.App&#39;. We&#39;re passing in an object
+(the element attributes) and a function (the inner content of the element) to
+the function. This gets compiled to javascript that runs both on the server and
+in the browser to render html. site.App() is loading your first lemon Component.
+Let&#39;s go see how it works.</p>
+<p>Coffeescript Templating has a long history:
+<a href="https://github.com/mauricemach/coffeekup">Coffeekup</a>,
+<a href="https://github.com/gradus/coffeecup">Coffeecup</a>,
+<a href="https://github.com/goodeggs/teacup">Teacup</a>.
+<a href="https://github.com/lemon/lemoncup">Lemoncup</a>.</p>
+<hr>
+<h1><a href="/en/clock?q=app">Your Application</a></h1>
+<h3>(src/App.coffee)</h3>
+<pre><code class="language-coffeescript"># styles
+require &#39;./css/App.css&#39;
+
+# component
+module.exports = lemon.Component {
+
+  # &#39;package&#39; assigns a namespace for our component
+  package: &#39;site&#39;
+
+  # &#39;name&#39; assigns a name for our component in our namespace
+  name: &#39;App&#39;
+
+  # &#39;id&#39; will add a dom id to our component
+  id: &#39;app&#39;
+
+  # default data for our component (aka: state/properties/attributes)
+  data: {
+    time: Date.now()
+  }
+
+  # lifecycle hooks
+  lifecycle: {
+
+    # we will listen for mounting to complete
+    # we will start a timer to update our local time each second
+    mounted: -&gt;
+
+      @interval_id = setInterval ( =&gt;
+        @time = Date.now()
+      ), 1000
+
+    beforeDestroy: -&gt;
+      clearInterval @interval_id
+  }
+
+  # this is our template to draw to the dom
+  # by using the &quot;_on&quot; attribute, we can listen for real-time
+  # changes to the time property
+  template: (data) -&gt;
+  div _on: &#39;time&#39;, _template: (time) -&gt;
+    new Date(time).toLocaleTimeString()
+
+}</code></pre>
+<hr>
+<h1><a href="/en/clock?q=styling">Styling</a></h1>
+<h3>(src/App.css)</h3>
+<pre><code class="language-css">#app {
+  align-items: center;
+  display: flex;
+  font-family: monospace;
+  font-size: 60px;
+  height: 100vh;
+  justify-content: center;
+}</code></pre>
+<p>Here we loaded a style file for our project. Currently Stylus is
+also supported, LESS and SASS support will come as soon as someone
+requests them.</p>
+<hr>
+<h1><a href="/en/clock?q=dev">Run the Development Server</a></h1>
+<pre><code class="language-bash">&gt; cd ~/dev/lemon-clock
+&gt; lemon dev
+listening at http://localhost:3000</code></pre>
+<hr>
+<h1><a href="/en/clock?q=test">Open your browser</a></h1>
+<h3><a href="http://localhost:3000">http://localhost:3000</a></h3>
+<p>It should look something like this</p>
+<div lemon-component="site.Clock"></div>
+
+<hr>
+<h1>Next Steps</h1>
+<h2>Do the advanced tutorial (hackernews)</h2>
+<p>This was a good start, but there&#39;s a lot more you can do with
+lemon. For a more advanced tutorial, go over to the
+<a href="/en/hackernews">hackernews</a> tutorial.</p>
+<h2>Have questions?</h2>
+<p>Visit our <a href="/en/how-to">How To</a> for code samples of common questions.</p>
+</div></div></div></div></div><div id="footer" class="" lemon-component="site.Footer" lemon-data="10"><div class=" lui-footer" lemon-component="lui.Footer" lemon-contents="11" lemon-data="12"><div>Released under the MIT License</div><div>Copyright © 2018 Shenzhen239</div><div><a href="https://icons8.com">Icon pack by Icons8</a></div><div style="display: none"><a href="/zh"><img src="https://png.icons8.com/office/40/000000/china.png" /></a><a href="/fr"><img src="https://png.icons8.com/office/40/000000/france.png" /></a><a href="/en"><img src="https://png.icons8.com/office/40/000000/usa.png" /></a></div></div></div></div>
+<script type='text/javascript' src='/bundle/386a75ee9c5255c327b4848e131f5af90adfdf01.js'></script></body></html>

@@ -1,0 +1,26 @@
+{
+  banner: {
+    title: '时钟教程'
+    subtitle: "
+      在本节中，您将学习基础知识; 安装Lemon.js，创建一个项目，
+      并运行你的Lemon.js开发服务器。 最终的结果将是滴答时钟。
+    "
+
+    buttons: [
+      {href: '/zh/hackernews', text: '点击这里查看高级教程'}
+    ]
+  }
+  nav: [
+    {href: '/zh/clock', text: '教程', is_title: true}
+    {href: '/zh/clock?q=installation', text: '安装'}
+    {href: '/zh/clock?q=create', text: '创建一个项目'}
+    {href: '/zh/clock?q=structure', text: '项目结构'}
+    {href: '/zh/clock?q=config', text: '项目配置'}
+    {href: '/zh/clock?q=index', text: '索引页面'}
+    {href: '/zh/clock?q=app', text: '你的应用'}
+    {href: '/zh/clock?q=styling', text: '造型'}
+    {href: '/zh/clock?q=dev', text: '开发'}
+    {href: '/zh/clock?q=test', text: '预习'}
+    {href: '/zh/clock?q=next-steps', text: '下一步'}
+  ]
+}

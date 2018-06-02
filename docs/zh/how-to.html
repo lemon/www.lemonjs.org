@@ -1,0 +1,533 @@
+<!DOCTYPE html><html lang="en"><head><title>lemon.js</title>
+<link rel='stylesheet' type='text/css' href='/bundle/0c69a41e257c8f5a23847780b629d0186cebdafb.css'></head><body><div id="app" class="" lemon-component="site.App" lemon-data="0"><div id="header" class="" lemon-component="site.Header" lemon-data="1"><div class=" lui-header" lemon-component="lui.Header" lemon-data="2"><a class="logo" href="/">lemon</a><div class="nav lui-header-menu" lemon-component="lui.HeaderMenu" lemon-data="3"><div><ul lemon-ref="$menu"><li><a href="/zh">家</a></li><li><a href="/zh/clock">教程</a></li><li><a href="/zh/api">应用程序接口</a></li><li><a href="/zh/how-to">How to</a></li><li><a href="/zh/examples">例子</a></li><li><a href="https://chat.lemonjs.org">聊</a></li><li><a href="https://github.com/lemon/lemonjs-cli">github上</a></li><div class="line" lemon-ref="$line"></div></ul></div></div></div></div><div class="" lemon-component="lemon.Router" lemon-data="4"><div class="" lemon-component="site.HowTo" lemon-data="5"><div class=" lui-banner" lemon-component="lui.Banner" lemon-data="6"><h1>How To</h1><p>You asked. We answered. If your question isn't already answered. Reach out on Discord</p></div><div class=" lui-story" lemon-component="lui.Story" lemon-data="7"><div class="lui-story-sidebar" lemon-ref="$sidebar"><div lemon-bind:list="nav" lemon-bind:template="8"></div></div><div class="lui-story-content"><div class="" lemon-component="lui.Markdown" lemon-data="9"><h1><a href="/en/how-to?q=cli">Command Line</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=install">Installation</a></h2>
+<p>install lemon globally with npm</p>
+<pre><code class="language-bash">&gt; npm install -g lemonjs-cli</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=dev">Development</a></h2>
+<p>Run a local dev server with live-reloads on your src and data</p>
+<pre><code class="language-bash">&gt; mkdir your-project
+&gt; cd your-project
+&gt; lemon new
+&gt; lemon dev</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=build">Build</a></h2>
+<p>This will build your site into the /build directory</p>
+<pre><code class="language-bash">&gt; cd your-project
+&gt; lemon build</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=run">Run</a></h2>
+<p>This will host your site as a static site from the build directory</p>
+<pre><code class="language-bash">&gt; cd your-project
+&gt; lemon run</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=deploy-gcs">Deploy to Google Cloud Storage</a></h2>
+<p>This will deploy your site to a google cloud storage bucket.</p>
+<ol>
+<li>Purchase your domain name (you can use <a href="http://domains.google">http://domains.google</a>)</li>
+<li>Set a CNAME on <a href="http://www.yourdomain.com">www.yourdomain.com</a> to c.storage.googleapis.com.</li>
+<li>Create a bucket with your domain name (<a href="http://www.yourdomain.com">www.yourdomain.com</a>)</li>
+<li>Create a <a href="https://console.cloud.google.com/apis/credentials/serviceaccountkey?_ga=2.170375971.-221606834.1526762983&amp;_gac=1.149573188.1527023101.CjwKCAjw_47YBRBxEiwAYuKdw_SdGVmJAeAppEfMfinv6bvP3RQ7DLeIXKxYRWsZJk0R8I2bqvlJQBoCK2UQAvD_BwE">service account</a><ul>
+<li>Service Account Name: deploy</li>
+<li>Role: Project &gt; Owner</li>
+<li>Key Type: JSON</li>
+</ul>
+</li>
+<li>Update your lemon.cson</li>
+</ol>
+<pre><code class="language-coffeescript">{
+  deploy: {
+    service: &quot;gcs&quot;
+    project: &quot;your-project-id&quot;
+    bucket: &quot;www.yourdomain.com&quot;
+    credentials: &quot;/absolute/path/to/creds&quot;
+  }
+}</code></pre>
+<pre><code class="language-bash">&gt; cd your-project
+&gt; lemon build
+&gt; lemon deploy</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=deploy-github">Deploy to Github Pages</a></h2>
+<ol>
+<li>go to your settings page (ex: <a href="https://github.com/lemon/lemonjs-cli/settings">https://github.com/lemon/lemonjs-cli/settings</a>)</li>
+<li>change &quot;Source&quot; to &quot;master branch /docs folder&quot;. click &quot;Save&quot;</li>
+<li>enter a custom domain. click &quot;Save&quot;</li>
+<li>CNAME your domain to YOUR-GITHUB-USERNAME.github.io (<a href="https://help.github.com/articles/setting-up-a-custom-subdomain/">more info here</a>]</li>
+<li>Update your lemon.cson</li>
+</ol>
+<pre><code class="language-coffeescript">{
+  deploy: {
+    service: &quot;github&quot;
+  }
+}</code></pre>
+<pre><code class="language-bash">&gt; cd your-project
+&gt; lemon build
+&gt; lemon deploy</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=deploy-s3">Deploy to Amazon S3</a></h2>
+<p>coming soon</p>
+<hr>
+<h1><a href="/en/how-to?q=components">Components</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=component-namespacing">Component Namespacing</a></h2>
+<p>Every component requires a &quot;package&quot; and a &quot;name&quot;. &quot;package&quot; is
+a namespace for your project. For a website, convention is to
+use &quot;site&quot; as your package name. For 3rd party libraries, try
+to keep them short, but easy to remember. For example, lemon ui
+library uses &quot;lui&quot;. The lemon material ui library uses &quot;mui&quot;. </p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &quot;site&quot;
+  name: &quot;MyComponent&quot;
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=component-classes">Component Classes</a></h2>
+<p>Sometimes you want a component to always have a specific
+class name. For example, the lui.Button always adds a 
+.lui-button class name to its element for styling. You
+can do this on your own components with the &quot;class&quot; property.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &quot;site&quot;
+  name: &quot;MyComponent&quot;
+  class: &#39;my-component&#39;
+}</code></pre>
+<hr>
+<h1><a href="/en/how-to?q=templates">Templates</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=ids">How to set &quot;id&quot; on an element</a></h2>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: -&gt;
+    div &#39;#my-id-1&#39;
+    div id: &#39;my-id-2&#39;
+    div {id: &#39;my-id-3&#39;}
+
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=classes">How to set &quot;class&quot; on an element?</a></h2>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: -&gt;
+    div &#39;.my-class-1&#39;
+    div class: &#39;my-class-2&#39;
+    div {class: &#39;my-class-3&#39;}
+
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=conditional-classes">How to set a conditional &quot;class&quot; on an element?</a></h2>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: (data) -&gt;
+    div class: {
+      &#39;my-class&#39;: data.if_should_have_class
+    }
+
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=attributes">How to set attributes on an element?</a></h2>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: (data) -&gt;
+    img src: &#39;&#39;, alt: &#39;&#39;
+    img {src: &#39;&#39;, alt: &#39;&#39;}
+
+    div &#39;data-title&#39;: &#39;&#39;, -&gt;
+      &#39;content&#39;
+
+    div {&#39;data-title&#39;: &#39;&#39;}, -&gt;
+      &#39;content&#39;
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=html">How to write raw html in my template?</a></h2>
+<p>By default, all data is escaped so that we can be sure to
+generate clean, valid html. If you know you have safe html
+to write, you can use the <code>raw</code> function.</p>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: (data) -&gt;
+    code -&gt;
+      raw data.html_sample
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=text">How to write content without an element?</a></h2>
+<p>Sometimes you want to write text to your dom at the same level of
+depth as other elements. This is common when you&#39;re using spans
+to do styling on a subtitle or metadata line. The <code>text</code> function
+can be used to write this text.</p>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: (data) -&gt;
+    div &#39;.blog-post&#39;, -&gt;
+      div &#39;.author&#39;, -&gt;
+        data.author
+      div &#39;.metadata&#39;, -&gt;
+        text &quot;Published on &quot;
+        span &#39;.published-on&#39;, -&gt;
+          data.published_at
+        text &quot; in category&quot;
+        span &#39;.category&#39;, -&gt;
+          data.category
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=custom-tags">My template is crashing says xxx tag not defined?</a></h2>
+<p>Not 100% of tags are readily available. Sometimes this is for namespace safety,
+or maybe it&#39;s just not a common tag to use so we didn&#39;t include it. If you
+think a tag is missing that should be added, let us know.</p>
+<p>Also, sometimes you&#39;re using WebComponents you may have non-standard
+tags that you&#39;re using.</p>
+<p>Either way, you can use the <code>tag</code> function to use any tag you want.</p>
+<pre><code class="language-coffeescript">module.export = lemon.Component {
+
+  template: (data) -&gt;
+    tag &#39;emoji-rain&#39;, {active: true}
+    tag &#39;app-drawer&#39;
+}</code></pre>
+<hr>
+<h1><a href="/en/how-to?q=data">Data</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=static-data">When should I use &quot;static&quot; data?</a></h2>
+<p>Most of the time you will use static. In most apps, a majority
+of the interface is based on items that don&#39;t react to events
+or data changes. All of the page content, the header, the
+footer, and sidebar list items of this site are static. </p>
+<p>For example, once the sidebar on the left is drawn, it doesn&#39;t need
+to be updated again. </p>
+<hr>
+<h2><a href="/en/how-to?q=dynamic-data">When should I use &quot;dynamic&quot; data?</a></h2>
+<p>Sometimes you&#39;ll have a component with constantly changing data
+and you&#39;ll want dom elements to react in real-time to your data
+changes.</p>
+<p>Here&#39;s an example of lemon-ui&#39;s Typewriter component. The state of the
+component changes while it animates, and the UI updates in real-time to
+react to these changes is state.</p>
+<div lemon-component="site.TypewriterExample"></div>
+
+<hr>
+<h1><a href="/en/how-to?q=data-binding">Data Binding (Dynamic Data)</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=binding-text">Binding Text</a></h2>
+<p>If you have a string value property that you want to react
+to real-time state changes. you can use text-binding.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+  data: {
+    property: &#39;value&#39;
+  }
+
+  template: -&gt;
+
+    div bind: {text: &#39;property&#39;}
+
+    div _text: &#39;property&#39;
+
+    div _on: &#39;property&#39;, _template: (property) -&gt;
+      text property
+
+}
+</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=binding-html">Binding HTML</a></h2>
+<p>If you have an html blob that you want to react
+to real-time state changes. you can use html-binding.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+  data: {
+    code_sample: &#39;&lt;div&gt;hello world&lt;/div&gt;&#39;
+  }
+
+  template: -&gt;
+
+    div bind: {html: &#39;code_sample&#39;}
+
+    div _html: &#39;code_sample&#39;
+
+    div _on: &#39;property&#39;, _template: (code_sample) -&gt;
+      raw code_sample
+
+}
+</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=binding-href">Binding href attributes</a></h2>
+<p>If you have a url property that you want to react
+to real-time state changes. you can use href-binding.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+  data: {
+    my_href: &#39;http://www.lemonjs.org&#39;
+  }
+
+  template: -&gt;
+    a bind: {href: &#39;my_href&#39;}
+    a _href: &#39;my_href&#39;
+
+}
+</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=binding-src">Binding src attributes</a></h2>
+<p>If you have an image url property that you want to react
+to real-time state changes. you can use href-binding.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+  data: {
+    my_image: &#39;http://www.lemonjs.org/img/test.jpg&#39;
+  }
+
+  template: -&gt;
+    img bind: {src: &#39;my_image&#39;}
+    img _src: &#39;my_image&#39;
+
+}
+</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=binding-templates">Binding templates</a></h2>
+<p>Sometimes you want partial updates, but you want to render
+something more complex than the value of the field. In that case,
+you can use template-binding.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+  data: {
+    active_tab: &#39;tab1&#39;
+    tab_content: {
+      tab1: &#39;hello world&#39;
+    }
+  }
+
+  template: -&gt;
+    div &#39;.tab-wrapper&#39;, _on: &#39;active_tab&#39;, _template: (active_tab, data) -&gt;
+      div &#39;.tab-header&#39;, -&gt;
+        active_tab
+      div &#39;.tab-content&#39;, -&gt;
+        data.tab_content[active_tab]
+
+}
+</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=binding-components">Binding Components</a></h2>
+<p>Sometimes you want to bind on not just a template, but a 
+full component with its own event handling and data management.
+In this case, you can use component-binding.</p>
+<pre><code class="language-coffeescript">require &#39;../components/CodeBlock&#39;
+
+module.exports = lemon.Component {
+
+  data: {
+    code_sample: &#39;&lt;div&gt;hello world&lt;/div&gt;&#39;
+  }
+
+  template: -&gt;
+    div _on: &#39;code_sample&#39;, _component: site.CodeBlock
+
+}
+</code></pre>
+<h2><a href="/en/how-to?q=binding-lists">Binding Lists</a></h2>
+<p>If you&#39;re managing lists, it&#39;s not efficient to re-mount
+the entire list everytime one item is added or removed from
+the list. Lemon has <code>list-binding</code> to solve this problem. As
+your list is modified, the dom will only modify the newly added
+or removed elements.</p>
+<pre><code class="language-coffeescript">require &#39;../components/ListItem&#39;
+
+module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;List&#39;
+
+  data: {
+    items: []
+  }
+
+  template: -&gt;
+    div _list: &#39;items&#39;, _component: site.ListItem
+
+}
+</code></pre>
+<hr>
+<h1><a href="/en/how-to?q=event-handling">Event Handling</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=click-event">How do I listen for a click event on an element?</a></h2>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;ClickTestComponent&#39;
+
+  methods: {
+    onClick: (e) -&gt;
+      alert &#39;clicked!&#39;
+  }
+
+  template: -&gt;
+    div $click: &#39;onClick&#39;, -&gt;
+      &#39;click me&#39;
+}</code></pre>
+<p>Sometimes it may be more convenient to put the event handler inline.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;ClickTestComponent&#39;
+
+  template: -&gt;
+    div {$click: -&gt; alert &#39;clicked!&#39;}, -&gt;
+      &#39;click me&#39;
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=component-events">How do I listen for events on the entire component?</a></h2>
+<p>you can manually add a listener after mount</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  package: &#39;site&#39;
+  name: &#39;SomeComponent&#39;
+
+  lifecycle: {
+    mounted: -&gt;
+      @addEventListener @el, &#39;click&#39;, (e) =&gt; @onClick e
+  }
+
+  methods: {
+    onClick: (e) -&gt;
+      console.log e
+  }
+
+  template: (data) -&gt;
+</code></pre>
+<hr>
+<h1><a href="/en/how-to?q=routing">Routing</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=direct-match">Direct Match Routing</a></h2>
+<p>Use direct match routing to match a pathname exactly.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/en/how-to&#39;: -&gt;
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=named-parameters">Named Parameters</a></h2>
+<p>Use named paramter routing to pull fields out of your url.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/video/:id&#39;: (match) -&gt;
+        # load VideoPage component which loads data from your api
+        # with match.params.id
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=expression-parameters">Expression Parameters</a></h2>
+<p>Often when you want some flexibility in a part of your url, but
+you don&#39;t want to let it be anything. In this case you can use
+expression paramters.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/(en|zh)/how-to&#39;: -&gt; # load how to page in given language
+      &#39;/video/([0-9]+)&#39;: -&gt; # all video ids should be integers
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=named-expression-parameters">Named Expression Parameters</a></h2>
+<p>Usually if you have an expression, you&#39;ll want to capture its value
+to use in your component.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/(en|zh):lang/how-to&#39;: -&gt; # load how to page in given language
+      &#39;/video/([0-9]+):id&#39;: -&gt; # all video ids should be integers
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=splat-parameters">Splat Parameters</a></h2>
+<p>Named parameters can&#39;t match across forward slashes, if you
+want to do that, you can use splat paramters <code>*</code>, which will
+match everything to the end of the url</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/en/*&#39;: -&gt; # match all /en... pages
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=querystring">Query String</a></h2>
+<p>The querystring is also parsed and available in your routes.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/en/how-to&#39;: (match) -&gt; match.query
+    }
+}</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=hash">Hash</a></h2>
+<p>The url hash is also available in your routes.</p>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+  template: -&gt;
+    lemon.Router {
+      &#39;/en/how-to&#39;: (match) -&gt; match.hash
+    }
+}</code></pre>
+<hr>
+<h1><a href="https://coffeescript.org/">Coffeescript</a></h1>
+<p>Visit <a href="https://coffeescript.org/">https://coffeescript.org/</a> to learn about coffeescript.</p>
+<hr>
+<h1><a href="https://github.com/bevry/cson">CSON</a></h1>
+<p>Visit <a href="https://github.com/bevry/cson">https://github.com/bevry/cson</a> to learn about coffeescript.</p>
+<hr>
+<h1><a href="/en/how-to?q=can-i-use">Can I Use</a></h1>
+<hr>
+<h2><a href="/en/how-to?q=jquery">Can I use Jquery?</a></h2>
+<p>Of course! Lemon has build in methods for finding elements,
+listening to events, and modifying the dom. So you probably
+only need jquery if you want to use jquery plugins. Simply
+add jquery to your head tag.</p>
+<h3>index.coffee</h3>
+<pre><code class="language-coffeescript">module.exports = -&gt;
+  doctype 5
+  head -&gt;
+    script src: &#39;https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js&#39;
+  body -&gt;
+    &quot;Your App&quot;</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=jquery-fullpage">Can I use Jquery FullPage?</a></h2>
+<p>Of course! You can use it manually, or use lemon-ui&#39;s built-in
+Jquery FullPage Component.</p>
+<h3>option 1</h3>
+<pre><code class="language-coffeescript">module.exports = -&gt;
+  doctype 5
+  html -&gt;
+    head -&gt;
+      script src: &#39;https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js&#39;
+      script src: &#39;https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.7/jquery.fullpage.min.js&#39;
+      link {
+        rel: &quot;stylesheet&quot;
+        type: &quot;text/css&quot;
+        href: &#39;https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.7/jquery.fullpage.min.css&#39;
+      }
+    body -&gt;
+      div id: &quot;fullpage&quot;, -&gt;
+        div &#39;.section&#39;, -&gt; &#39;section 1&#39;
+        div &#39;.section&#39;, -&gt; &#39;section 2&#39;
+        div &#39;.section&#39;, -&gt; &#39;section 3&#39;
+        div &#39;.section&#39;, -&gt; &#39;section 4&#39;
+      script type: &#39;text/javascript&#39;, &quot;&quot;&quot;
+        $(document).ready(function() {
+          $(&#39;#fullpage&#39;).fullpage();
+        });
+      &quot;&quot;&quot;</code></pre>
+<h3>option 2</h3>
+<pre><code class="language-coffeescript">require &#39;lemonjs-lui/FullPage&#39;
+
+module.exports = -&gt;
+  doctype 5
+  html -&gt;
+    body -&gt;
+      lui.FullPage {
+        sections: [
+          (-&gt; text &#39;section 1&#39;)
+          (-&gt; text &#39;section 2&#39;)
+          (-&gt; text &#39;section 3&#39;)
+          (-&gt; text &#39;section 4&#39;)
+        ]
+      }</code></pre>
+<hr>
+<h2><a href="/en/how-to?q=bootstrap">Can I use bootstrap?</a></h2>
+<p>Yes! Sample coming soon.</p>
+<hr>
+<h2><a href="/en/how-to?q=materialize">Can I use materialize?</a></h2>
+<p>Yes! Sample coming soon.</p>
+<hr>
+</div></div></div></div></div><div id="footer" class="" lemon-component="site.Footer" lemon-data="10"><div class=" lui-footer" lemon-component="lui.Footer" lemon-contents="11" lemon-data="12"><div>Released under the MIT License</div><div>Copyright © 2018 Shenzhen239</div><div><a href="https://icons8.com">Icon pack by Icons8</a></div><div style="display: none"><a href="/zh"><img src="https://png.icons8.com/office/40/000000/china.png" /></a><a href="/fr"><img src="https://png.icons8.com/office/40/000000/france.png" /></a><a href="/en"><img src="https://png.icons8.com/office/40/000000/usa.png" /></a></div></div></div></div>
+<script type='text/javascript' src='/bundle/8dabcb9b4ab643a886b2881d5fbd2f9fe23643ca.js'></script></body></html>

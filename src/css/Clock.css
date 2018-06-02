@@ -1,0 +1,10 @@
+#clock-demo {
+  align-items: center;
+  background: white;
+  border: 1px solid black;
+  display: flex;
+  font-family: monospace;
+  font-size: 60px;
+  height: 60vh;
+  justify-content: center;
+}

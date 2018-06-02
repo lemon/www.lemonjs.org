@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="en"><head><title>lemon.js</title>
+<link rel='stylesheet' type='text/css' href='/bundle/0c69a41e257c8f5a23847780b629d0186cebdafb.css'></head><body><div id="app" class="" lemon-component="site.App" lemon-data="0"><div id="header" class="" lemon-component="site.Header" lemon-data="1"><div class=" lui-header" lemon-component="lui.Header" lemon-data="2"><a class="logo" href="/">lemon</a><div class="nav lui-header-menu" lemon-component="lui.HeaderMenu" lemon-data="3"><div><ul lemon-ref="$menu"><li><a href="/zh">家</a></li><li><a href="/zh/clock">教程</a></li><li><a href="/zh/api">应用程序接口</a></li><li><a href="/zh/how-to">How to</a></li><li><a href="/zh/examples">例子</a></li><li><a href="https://chat.lemonjs.org">聊</a></li><li><a href="https://github.com/lemon/lemonjs-cli">github上</a></li><div class="line" lemon-ref="$line"></div></ul></div></div></div></div><div class="" lemon-component="lemon.Router" lemon-data="4"><div class="" lemon-component="site.ClockTutorial" lemon-data="5"><div class=" lui-banner" lemon-component="lui.Banner" lemon-data="6"><h1>时钟教程</h1><p>在本节中，您将学习基础知识; 安装Lemon.js，创建一个项目， 并运行你的Lemon.js开发服务器。 最终的结果将是滴答时钟。</p><a href="/zh/hackernews">点击这里查看高级教程</a></div><div class=" lui-story" lemon-component="lui.Story" lemon-data="7"><div class="lui-story-sidebar" lemon-ref="$sidebar"><div lemon-bind:list="nav" lemon-bind:template="8"></div></div><div class="lui-story-content"><div class="" lemon-component="lui.Markdown" lemon-data="9"><h1><a href="/zh/clock?q=installation">安装</a></h1>
+<pre><code class="language-bash"># 用npm在全球范围内安装lemon-cli
+&gt; npm install -g lemonjs-cli</code></pre>
+<hr>
+<h1><a href="/zh/clock?q=create">创建一个项目</a></h1>
+<pre><code class="language-bash"># 为您的新项目创建一个目录
+&gt; mkdir -p ~/lemon-clock
+&gt; cd ~/lemon-clock
+
+# 从现有的Lemon.js模板创建您的新项目
+&gt; lemon new clock-clock-app</code></pre>
+<hr>
+<h1><a href="/zh/clock?q=structure">项目结构</a></h1>
+<pre><code class="language-bash"># 简要概述项目结构
+&gt; find .
+.
+./lemon.cson          # 包含您的Lemon.js配置
+./README.md           # 项目自述文件
+./src                 # 源代码目录
+./src/App.coffee      # 你的应用
+./src/App.css         # 造型
+./src/index.coffee    # 索引页面</code></pre>
+<hr>
+<h1><a href="/zh/clock?q=config">项目配置</a></h1>
+<h3>(lemon.cson)</h3>
+<pre><code class="language-coffeescript">{
+  name: &quot;Lemon clock&quot;                # 您的应用的名称
+  dev: {
+    port: 3000                       # 在端口3000上收听
+  }
+  prod: {
+    hostname: &#39;clock.lemonjs.org&#39;    # 您的应用将被部署到的主机名
+  }
+}</code></pre>
+<p>&quot;prod.hostname&quot;是您的网站最终将位于的网址。
+此属性在应用程序中的任何地方都可用作&quot;site.hostname&quot;。 &quot;name&quot;是您的项目的名称。
+&quot;dev.port&quot;是您的本地开发服务器将使用的端口。</p>
+<p><a href="https://github.com/bevry/cson">了解有关CSON的更多信息</a></p>
+<hr>
+<h1><a href="/zh/clock?q=index">索引页面</a></h1>
+<h3>(src/index.coffee)</h3>
+<pre><code class="language-coffeescript"># 软件依赖关系
+require &#39;./App&#39;
+
+# 模板
+module.exports = -&gt;
+  doctype 5
+  html -&gt;
+    head -&gt;
+      title &#39;Lemon clock&#39;
+    body -&gt;
+      site.App()</code></pre>
+<p>注意我们如何使用“site.App”访问我们的应用程序。 大多数，即使不是全部，
+组件应该以这种方式命名空间。 在App.coffee中，你会的
+看看我们如何定义命名空间。</p>
+<p>这个模板可能会让你想起HTML。 这是CoffeeScript模板。
+它看起来很漂亮，而且工作起来非常简单和灵活。
+您可能已经注意到我们实际做的是用名称&#39;doctype&#39;，&#39;html&#39;，&#39;head&#39;，
+&#39;title&#39;和&#39;site.App&#39;来调用函数。
+我们将一个对象（元素属性）和一个函数（元素的内部内容）传递给函数。
+这将被编译为JavaScript，并在服务器和浏览器上运行以呈现HTML。
+“site.App（）”正在加载你的第一个柠檬组件。 我们来看看它是如何工作的。</p>
+<p>CoffeeScript模板有着悠久的历史
+<a href="https://github.com/mauricemach/coffeekup">Coffeekup</a>,
+<a href="https://github.com/gradus/coffeecup">Coffeecup</a>,
+<a href="https://github.com/goodeggs/teacup">Teacup</a>.
+<a href="https://github.com/lemon/lemoncup">Lemoncup</a>.</p>
+<hr>
+<h1><a href="/zh/clock?q=app">你的应用</a></h1>
+<h3>(src/App.coffee)</h3>
+<pre><code class="language-coffeescript"># 样式表
+require &#39;./css/App.css&#39;
+
+# 浏览器组件
+module.exports = lemon.Component {
+
+  # “package”为我们的组件分配一个名称空间
+  package: &#39;site&#39;
+
+  # &quot;name&quot;在我们的命名空间中为我们的组件分配一个名称
+  name: &#39;App&#39;
+
+  # &quot;id&quot;会为我们的组件添加一个DOM标识符
+  id: &#39;app&#39;
+
+  # 我们组件的默认数据
+  data: {
+    time: Date.now()
+  }
+
+  # 生命周期挂钩
+  lifecycle: {
+
+    # 听着安装完成
+    # 启动一个计时器
+    mounted: -&gt;
+      @interval_id = setInterval ( =&gt;
+        @time = Date.now()
+      ), 1000
+
+    beforeDestroy: -&gt;
+      clearInterval @interval_id
+  }
+
+  # 这是我们绘制到DOM的模板
+  # 通过使用&quot;_on&quot;属性，我们可以监听&quot;time&quot;属性的实时更改
+  template: (data) -&gt;
+  div _on: &#39;time&#39;, _template: (time) -&gt;
+    new Date(time).toLocaleTimeString()
+
+}</code></pre>
+<hr>
+<h1><a href="/zh/clock?q=styling">造型</a></h1>
+<h3>(src/App.css)</h3>
+<pre><code class="language-css">#app {
+  align-items: center;
+  display: flex;
+  font-family: monospace;
+  font-size: 60px;
+  height: 100vh;
+  justify-content: center;
+}</code></pre>
+<p>这里我们为我们的项目加载了一个样式文件。
+目前Stylus也被支持，LESS和SASS支持会在有人请求时立即提供。</p>
+<hr>
+<h1><a href="/zh/clock?q=dev">开发</a></h1>
+<pre><code class="language-bash">&gt; cd ~/dev/lemon-clock
+&gt; lemon dev
+listening at http://localhost:3000</code></pre>
+<hr>
+<h1><a href="/zh/clock?q=test">预习</a></h1>
+<h3><a href="http://localhost:3000">http://localhost:3000</a></h3>
+<p>它应该看起来像这样</p>
+<div lemon-component="site.Clock"></div>
+
+<hr>
+<h1>下一步</h1>
+<h2>做高级教程 (Hackernews)</h2>
+<p>这是一个好的开始，但你可以用柠檬做更多的事情。
+要获得更高级的教程，请转到<a href="/zh/hackernews">HackerNews</a>教程。</p>
+</div></div></div></div></div><div id="footer" class="" lemon-component="site.Footer" lemon-data="10"><div class=" lui-footer" lemon-component="lui.Footer" lemon-contents="11" lemon-data="12"><div>Released under the MIT License</div><div>Copyright © 2018 Shenzhen239</div><div><a href="https://icons8.com">Icon pack by Icons8</a></div><div style="display: none"><a href="/zh"><img src="https://png.icons8.com/office/40/000000/china.png" /></a><a href="/fr"><img src="https://png.icons8.com/office/40/000000/france.png" /></a><a href="/en"><img src="https://png.icons8.com/office/40/000000/usa.png" /></a></div></div></div></div>
+<script type='text/javascript' src='/bundle/a1c7c7d76a300f6fe582c4af0941101400de8b5e.js'></script></body></html>

@@ -1,0 +1,45 @@
+.demo
+  .left
+    display inline-block
+    vertical-align top
+    width 60%
+  .right
+    box-sizing border-box
+    display inline-block
+    padding 0 20px
+    vertical-align top
+    width 40%
+    .example
+      background: #f8f8f8;
+      border-radius .3em
+      border: 2px solid #ddd;
+      box-sizing border-box
+      margin .5em 0
+      padding 3em 1em
+    .example:not(.custom)
+      button
+        background #5f57ad
+        color white
+        cursor pointer
+        font-weight bold
+        margin 8px
+        padding 8px 16px
+      a
+        border-bottom 1px solid #5f57ad
+        margin 0 10px
+      span
+        display block
+      [lemon-component] div
+        background transparent
+        border 1px solid #000
+        color #2d2d2d
+        margin 10px
+        padding 20px
+      [lemon-component] div[lemon-bind\\3Atemplate]
+        border none
+        margin 0
+        padding 0
+      [lemon-component] div[lemon-component]
+        border none
+        margin 0
+        padding 0

@@ -1,0 +1,11 @@
+{
+  banner: {
+    title: 'Lemon API Reference'
+    subtitle: 'Below is an API reference for how to use Lemon'
+  }
+  autonav: true
+  nav: []
+  exclude: [
+    'How To'
+  ]
+}

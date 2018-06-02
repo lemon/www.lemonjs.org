@@ -1,0 +1,696 @@
+<!DOCTYPE html><html lang="en"><head><title>lemon.js</title>
+<link rel='stylesheet' type='text/css' href='/bundle/0c69a41e257c8f5a23847780b629d0186cebdafb.css'></head><body><div id="app" class="" lemon-component="site.App" lemon-data="0"><div id="header" class="" lemon-component="site.Header" lemon-data="1"><div class=" lui-header" lemon-component="lui.Header" lemon-data="2"><a class="logo" href="/">lemon</a><div class="nav lui-header-menu" lemon-component="lui.HeaderMenu" lemon-data="3"><div><ul lemon-ref="$menu"><li><a href="/zh">家</a></li><li><a href="/zh/clock">教程</a></li><li><a href="/zh/api">应用程序接口</a></li><li><a href="/zh/how-to">How to</a></li><li><a href="/zh/examples">例子</a></li><li><a href="https://chat.lemonjs.org">聊</a></li><li><a href="https://github.com/lemon/lemonjs-cli">github上</a></li><div class="line" lemon-ref="$line"></div></ul></div></div></div></div><div class="" lemon-component="lemon.Router" lemon-data="4"><div class="" lemon-component="site.Api" lemon-data="5"><div class=" lui-banner" lemon-component="lui.Banner" lemon-data="6"><h1>Lemon API Reference</h1><p>Below is an API reference for how to use Lemon</p></div><div class=" lui-story" lemon-component="lui.Story" lemon-data="7"><div class="lui-story-sidebar" lemon-ref="$sidebar"><div lemon-bind:list="nav" lemon-bind:template="8"></div></div><div class="lui-story-content"><div class="" lemon-component="lui.Markdown" lemon-data="9"><h1><a href="/en/api?q=components">Components</a></h1>
+<pre><code class="language-coffeescript">module.exports = lemon.Component {
+
+
+
+  # [package](/en/api?q=components.package)
+  # _
+  # This namespace will be used anytime your component is used
+  # defaults to &quot;window&quot;, but it is strongly encouraged to
+  # choose a unique namespace.
+  package: &#39;my-package&#39;
+
+
+
+  # [name](/en/api?q=components.name)
+  # _
+  # This is the name of your component. It identifies the name
+  # that must be used when people use your component. Keep it
+  # short, but descriptive.
+  name: &#39;MyComponent&#39;
+
+
+
+  # [id](/en/api?q=components.id)
+  # _
+  # This option will set an id property on every instance of
+  # your component. This is commonly used to idenfity pages
+  # in your site and not often used for 3rd-party components.
+  id: &#39;element-id&#39;
+
+
+
+  # [class](/en/api?q=components.class)
+  # _
+  # This option will set a class property on every instance of
+  # your component. It&#39;s common to set a class name on re-useable
+  # components so that you can style them.
+  class: &#39;element-class&#39;
+
+
+
+  # [data](/en/api?q=components.data)
+  # _
+  # Data will define the default values for your data object
+  # on a component instance. Anything here can be overridden
+  # when a user instantiates a component. Data attributes are
+  # available in your component template, as well as in any
+  # methods on your component.
+  # _
+  # Each data property will be made available directly on the
+  # component instance. In this example, &quot;foo&quot; would be able
+  # to be referenced as @foo in your listeners and methods. It
+  # could be updated with `@foo = &quot;new bar&quot;`.
+  data: {
+    foo: &quot;bar&quot;
+    items: [1, 2, 3]
+    more_items: [
+      {a: &#39;1&#39;}
+      {b: &#39;2&#39;}
+    ]
+    date: new Date()
+  }
+
+
+
+  # [computed](/en/api?q=components.computed)
+  # _
+  # Computed allows you to define computed properties to avoid
+  # putting this logic in your templates. Computed properties
+  # can be used within methods and within templates
+  computed: {
+    prettyDate: -&gt;
+      @date.toLocaleTimeString()
+  }
+
+
+
+  # [watch](/en/api?q=components.watch)
+  # _
+  # Most of the time you will use template binding to modify
+  # your component when data properties change, but sometimes
+  # you want to take a specific action when data changes. Watch
+  # allows you to execute custom functions when your data
+  # properties are modified.
+  watch: {
+    date: (new_date) -&gt;
+      console.log &#39;date has changed!&#39;
+  }
+
+
+
+  # [lifecycle](/en/api?q=components.lifecycle)
+  # _
+  # Lifecycle methods allow you to take action at certain
+  # stages of your components life. The most commonly used
+  # is &quot;mounted&quot; which will be called after your template
+  # has been mounted and inserted into the dom.
+  # _
+  # In other frameworks, using &quot;beforeDestroy&quot; or &quot;componentDidUnmount&quot;
+  # lifecycle hooks are common. In lemon, you typically don&#39;t need to
+  # do that. All child component references are internally maintained.
+  lifecycle: {
+    beforeCreate: -&gt;
+    created: -&gt;
+    beforeMount: -&gt;
+    mounted: -&gt;
+    beforeDestroy: -&gt;
+    destroyed: -&gt;
+    beforeRoute: (pathname, options) -&gt;
+    routed: (pathname, options) -&gt;
+  }
+
+
+
+  # [methods](/en/api?q=components.methods)
+  # _
+  # Methods is where you can define any actions you want your
+  # component to be able to take. This will typically involve
+  # handling events, making API calls, and other interactive
+  # features.
+  # _
+  # Similar to &quot;data&quot; properties, these methods will be exposed
+  # directly on the component instance.
+  methods: {
+    printHello: -&gt;
+      console.log &#39;hello&#39;
+  }
+
+
+
+  # [routes](/en/api?q=components.routes)
+  # _
+  # Routes allows you to add listeners and take action when 
+  # the url of the app changes.
+  # _
+  # you can also use lemon.Router directly in templates, this
+  # will be show below in the templates section
+  routes: {
+    &#39;/&#39;: &#39;onIndexPageLoad&#39;
+    &#39;/api*&#39;: &#39;onApiPageLoad&#39;
+    &#39;/inline-action&#39;: -&gt; console.log &#39;inline action route&#39;
+  }
+
+
+
+  # [template](/en/api?q=components.template)
+  # _
+  # Template is the most import property of a component. It
+  # defines what will mount into the dom. Almost all standard
+  # dom tags are readily available, as well as loaded Components.
+  # _
+  # See below for more thorough details about what you can do with
+  # templates.
+  template: (data, contents) -&gt;
+    label -&gt; data.foo
+    div &#39;.my-contents&#39;, -&gt;
+      contents()
+
+}</code></pre>
+<hr>
+<h1><a href="/en/api?q=templates">Templates</a></h1>
+<pre><code class="language-coffeescript">
+module.exports = lemon.Component {
+
+  template: (data, contents) -&gt;
+
+
+
+    # [tags](/en/api?q=templates.tags)
+    # _
+    # Tags are the regular dom elements that you already know about.
+    # If you find a tag that isn&#39;t support, use &quot;tag {element_name}&quot;
+    div -&gt;
+      &#39;text&#39;
+    span -&gt;
+      &#39;text&#39;
+    hr()
+    br()
+    tag &#39;svg&#39;, -&gt;
+
+
+
+    # [attributes](/en/api?q=templates.attributes)
+    # _
+    # Attributes are set by passing an object into the tag function
+    a href: &#39;&#39;, alt: &#39;&#39;, -&gt;
+      &#39;link&#39;
+    a {href: &#39;&#39;, alt: &#39;&#39;}, -&gt;
+      &#39;link&#39;
+
+
+
+    # [contents](/en/api?q=templates.contents)
+    # _
+    # Contents of a tag get passed as a function.
+    # Here we draw the contents passed to this template.
+    div -&gt;
+      contents()
+
+    # Here we are passing contents to a child component
+    pkg.SomeComponent {}, -&gt;
+      &#39;Here we are defining contents to pass to our component&#39;
+
+
+
+    # [id](/en/api?q=templates.id)
+    # _
+    # How to set the id attribute on a dom element. You can use
+    # &#39;#&#39; in a string as the first argument to the tag element
+    # for shorthand syntax.
+    div {id: &#39;my-div-1&#39;}, -&gt;
+    div id: &#39;my-div-2&#39;}, -&gt;
+    div &#39;#my-div-3&#39;, -&gt;
+
+
+
+    # [class](/en/api?q=templates.class)
+    # _
+    # How to set the class attribute on a dom element. You can use
+    # &#39;.&#39; in a string as the first argument to the tag element
+    # for shorthand syntax. If you pass an object as the value
+    # to class, it will include the classes for which the value
+    # is truthy.
+    div {class: &#39;my-div-1&#39;}, -&gt;
+    div class: &#39;my-div-2&#39;, -&gt;
+    div &#39;.my-div-3&#39;, -&gt;
+    div class: {
+      button: true
+      filled: data.is_filled
+    }
+
+
+
+    # [style](/en/api?q=templates.style)
+    # _
+    # How to set inline css styles on a dom element
+    div {style: &#39;color: red&#39;}, -&gt;
+    div style: &#39;color:red&#39;, -&gt;
+    div style: {
+      background: data.background
+      color: data.color
+    }
+
+
+
+    # [raw](/en/api?q=templates.raw)
+    # _
+    # If you need to input html directly, use &quot;raw&quot;
+    div -&gt;
+      raw data.html_value
+
+
+
+    # [text](/en/api?q=templates.text)
+    # _
+    # If you need to input text without an element, use &quot;text&quot;
+    div -&gt;
+      span -&gt; &#39;item 1&#39;
+      text &quot;, &quot;
+      span -&gt; &quot;item 2&quot;
+
+
+
+    # [event handling](/en/api?q=templates.events)
+    # _
+    # To handle events, use the &quot;on&quot; property or the &quot;$&quot; shorthand
+    div on: {
+      click: &#39;onClick&#39;
+      mouseover: &#39;onMouseover&#39;
+      mouseout: &#39;onMouseOut&#39;
+    }, -&gt;
+      &#39;hello world&#39;
+
+    div $click: &#39;onClick&#39;, -&gt;
+      &#39;hello world&#39;
+
+
+
+    # [data binding](/en/api?q=templates.binding)
+    # _
+    # To have templates automatically update as data changes,
+    # use data binding. &quot;href&quot;, &quot;src&quot;, &quot;text&quot;, and &quot;html&quot; will
+    # perform specific updates to your elements. The &quot;on&quot; binding
+    # will allow you to redraw any piece of your dom when that
+    # value changes.
+    a bind: {href: &#39;url&#39;}, -&gt; &#39;link&#39;
+    img bind: {src: &#39;url&#39;}
+    span bind: {text: &#39;text_property&#39;}
+
+    a _href: &#39;url&#39;, -&gt; &#39;link&#39;
+    img _src: &#39;url&#39;
+    span _text: &#39;text_property&#39;
+
+    div _on: &#39;some_property&#39;, _template: (value) -&gt;
+      span -&gt; value
+
+
+
+    # [binding lists](/en/api?q=templates.binding-lists)
+    # _
+    # Use _list to bind a list. When binding a list you must provide
+    # either a template to draw, or a component to mount.
+    ul _list: &#39;my_list&#39;, _template: (item) -&gt;
+      li -&gt;
+        item.text
+
+    ul _list: &#39;my_list&#39;, _component: pkg.SomeComponent
+
+
+
+    # [refs](/en/api?q=templates.refs)
+    # _
+    # Use &quot;ref&quot; to make a component or element easier to access in
+    # your component methods. When assigning a ref, you&#39;ll be able
+    # to access that element or component at &quot;@myref&quot;. It is good
+    # practice to start ref names with a &quot;$&quot; to distinguish them
+    # from methods and data.
+    div -&gt;
+      pkg.SomeComponent {ref: &#39;$some_component&#39;}
+      span ref: &#39;$some_span&#39;
+
+
+
+    # [router](/en/api?q=templates.router)
+    # _
+    # Use &quot;lemon.Router&quot; to allow multiple different components to
+    # load conditioned upon the current url.
+    div -&gt;
+      lemon.Router {
+        &#39;/api&#39;: site.ApiPage
+        &#39;/faq&#39;: site.FaqPage
+        &#39;/hello&#39;: -&gt;
+          div -&gt; &#39;hello world&#39;
+      }
+
+
+}</code></pre>
+<hr>
+<h1><a href="/en/api?q=lemon.Router">lemon.Router</a></h1>
+<pre><code class="language-coffeescript">
+module.exports = lemon.Component {
+
+  template: (data, contents) -&gt;
+
+    # [basics](/en/api?q=lemon.Router/basics)
+    # _
+    # Use a lemon.Router to react to page changes
+    lemon.Router {
+      &#39;/&#39;: -&gt; console.log &#39;index page&#39;
+      &#39;/:lang/api&#39;: -&gt; console.log &#39;api page&#39;
+      &#39;/:lang/how-to&#39;: -&gt; console.log &#39;how-to page&#39;
+    }
+
+
+
+    # [components](/en/api?q=lemon.Router/components)
+    # _
+    # The most common use of a lemon.Router is to control
+    # which page will be loaded for your app. Simply use
+    # the component as the action for each route.
+    # Note that any of the component routed to could have
+    # their own lemon.Routers inside them. This allows for very
+    # clean routing definition.
+    lemon.Router {
+      &#39;/&#39;: -&gt; site.IndexPage
+      &#39;/api&#39;: -&gt; site.ApiPage
+      &#39;/how-to&#39;: -&gt; site.HowToPage
+      &#39;/tutorials/*&#39;: -&gt; site.TutorialWrapperPage
+    }
+
+
+
+
+
+    # [beforeRoute](/en/api?q=lemon.Router/beforeRoute)
+    # _
+    # There&#39;s a hook to take action prior to performing the route.
+    # If your beforeRoute method returns false (boolean), then the
+    # Router will not update. The default behavior is to only route
+    # when location.pathname changes. You could override this behavior
+    # to reload everytime a query parameter is modified. 
+    lemon.Router {
+      beforeRoute: ((current, prev) -&gt;
+        if current.pathname is prev.pathname
+          if current.search is prev.search
+            return false
+        return true
+      )
+      routes: {
+        &#39;/&#39;: -&gt; console.log &#39;index page&#39;
+        &#39;/:lang/api&#39;: -&gt; console.log &#39;api page&#39;
+        &#39;/:lang/how-to&#39;: -&gt; console.log &#39;how-to page&#39;
+      }
+    }
+
+
+
+    # [routed](/en/api?q=lemon.Router/routed)
+    # _
+    # There&#39;s a hook to take action after performing the route.
+    lemon.Router {
+      routes: {
+        &#39;/&#39;: -&gt; console.log &#39;index page&#39;
+        &#39;/:lang/api&#39;: -&gt; console.log &#39;api page&#39;
+        &#39;/:lang/how-to&#39;: -&gt; console.log &#39;how-to page&#39;
+      }
+      routed: ((current, previous) -&gt;
+        console.log &#39;done routing. scroll to top of page&#39;
+        lemon.scrollTo document.body
+      )
+    }
+
+
+
+    # [patterns](/en/api?q=lemon.Router/patterns)
+    # _
+    # lemon.Router handles route patterns similar to most other
+    # libraries. Below are examples of routing patterns.
+    lemon.Router {
+
+      # direct match
+      &#39;/&#39;: -&gt;
+      &#39;/en/api&#39;: -&gt;
+
+      # named parameters
+      &#39;/:lang/api&#39;: -&gt;
+      &#39;/video/:id&#39;: -&gt;
+
+      # expression parameters
+      &#39;/(en|zh)/api&#39;: -&gt;
+      &#39;/video/([0-9]+)&#39;: -&gt;
+
+      # named expression parameters
+      &#39;/(en|zh):lang/api&#39;: -&gt;
+      &#39;/video/([0-9]+):id&#39;: -&gt;
+
+      # splat parameters (matches everything, including /)
+      &#39;/en/*&#39;: -&gt;
+      &#39;/*&#39;: -&gt;
+
+      # named splat parameters
+      &#39;/en/*foo&#39;: -&gt;
+
+    }
+
+</code></pre>
+<hr>
+<h1><a href="/en/api?q=lemon">lemon</a></h1>
+<pre><code class="language-coffeescript">
+
+# [lemon.addClass](/en/api?q=lemon.addClass)
+# _
+# Function for adding a class to a dom element
+&gt; var el = document.getElementById(&#39;app&#39;);
+&gt; lemon.addClass(el, &#39;test-class&#39;);
+&gt; el.getAttribute(&#39;class&#39;);
+&quot;test-class&quot;
+
+
+
+# [lemon.browser_events](/en/api?q=lemon.browser_events)
+# _
+# List of browser methods available in the current browser
+# for adding event listeners on
+&gt; lemon.browser_events
+(85) [&quot;click&quot;, &quot;focus&quot;, &quot;mouseover&quot;, &quot;contextmenu&quot;, &quot;copy&quot;, &quot;scroll&quot;, ...]
+
+
+
+# [lemon.checkRoute](/en/api?q=lemon.checkRoute)
+# _
+# Function to check whether a routing pattern matches
+# the current url of the page
+#
+# The result contains the page details: hash, href, params, pathname, query
+&gt; lemon.checkRoute(&quot;/:lang/api&quot;);
+{
+  hash: &quot;&quot;,
+  href: &quot;http%3A//localhost:3000/en/api&quot;,
+  params: {},
+  pathname:&quot;/en/api&quot;,
+  query: {&quot;&quot;: undefined}
+}
+
+
+# [lemon.checkRoutes](/en/api?q=lemon.checkRoutes)
+# _
+# Function to check a given set of routes and return
+# the first one that matches the current url, if any.
+#
+# The result contains the page details: hash, href, params, pathname, query
+# As well as the pattern of the route that was matched, and the action to take
+&gt; lemon.checkRoutes({
+  &#39;/&#39;: function(){},
+  &#39;/:lang&#39;: function(){},
+  &#39;/:lang/api&#39;: function(){}
+})
+{
+  action: f(),
+  hash: &quot;&quot;,
+  href: &quot;http%3A//localhost:3000/en/api&quot;,
+  params: {lang: &quot;en&quot;}
+  pathname:&quot;/en/api&quot;,
+  pattern: &quot;/:lang/api&quot;,
+  query: {}
+}
+
+
+
+# [lemon.copy](/en/api?q=lemon.copy)
+# _
+# Function to deep copy an object
+&gt; var item = {hello: &quot;world&quot;, obj: {key: &quot;value&quot;}};
+&gt; var copy = lemon.copy(item);
+&gt; item.obj === copy.obj
+false
+&gt; item.obj.key === copy.obj.key
+true
+
+
+
+# [lemon.get](/en/api?q=lemon.get)
+# _
+# Function to get a component instance by unique id
+# lemon.get(id) is equivalent to lemon.Components[id]
+# components will be given non-identifiable unique ids
+# unless a specific id is given to the component
+&gt; lemon.get(&#39;app&#39;).id
+app
+
+
+
+# [lemon.hasClass](/en/api?q=lemon.hasClass)
+# _
+# Function for checking if an element has a class
+&gt; var el = document.getElementById(&#39;app&#39;);
+&gt; lemon.hasClass(el, &#39;test-class&#39;);
+true
+
+
+
+# [lemon.loadElement](/en/api?q=lemon.loadElement)
+# _
+# Function to load a component from a dom element
+# Any dom element containing the lemon-component attribute
+# can be used. This function will load the component spec
+# then create the component using lemon-data and lemon-contents
+# as input parameters.
+&gt; var el, target;
+&gt; el = document.createElement(&#39;div&#39;)
+&gt; el.innerHTML = &quot;&lt;div id=&#39;test-clock&#39; lemon-component=&#39;site.Clock&#39;&gt;&lt;/div&gt;&quot;
+&gt; document.body.appendChild(el)
+&gt; target = document.getElementById(&#39;test-clock&#39;)
+&gt; lemon.loadElement(target)
+&gt; // scroll down to the bottom of the page
+
+
+
+# [lemon.offset](/en/api?q=lemon.offset)
+# _
+# Function to find a dom elements location in the browser/window
+# Includes standard getBoundingClientRect() properties, as well
+# as _top and _bottom which specify the elements distance to the
+# top and bottom of the current viewport.
+
+
+
+# [lemon.removeClass](/en/api?q=lemon.removeClass)
+# _
+# Function for removing a class to a dom element
+&gt; var el = document.getElementById(&#39;app&#39;);
+&gt; lemon.removeClass(el, &#39;test-class&#39;);
+&gt; el.getAttribute(&#39;class&#39;);
+&quot;&quot;
+
+
+
+
+# [lemon.route](/en/api?q=lemon.route)
+# _
+# Function for programmatic page changes. Relative links
+# will be intercepted and change page locally, but sometimes
+# you want to force a page change programmatically. Simply
+# call lemon.route(url)
+&gt; lemon.route(location.pathname + &#39;?q=lemon.route&#39;)
+&gt; // url updates and this page scrolls to this paragraph
+
+
+
+# [lemon.scrollTo](/en/api?q=lemon.scrollTo)
+# _
+# Function for scrolling the window to a specific element.
+&gt; lemon.route(location.pathname + &#39;?q=lemon.route&#39;)
+&gt; // url updates and this page scrolls to this paragraph
+
+</code></pre>
+<hr>
+<h1><a href="/en/api?q=lemon.events">Global Events</a></h1>
+<pre><code class="language-coffeescript">
+
+# [lemon.once](/en/api?q=lemon.once)
+# _
+# Function to add a one-time listener for a global event
+#
+&gt; lemon.once(&quot;scroll&quot;, function(e){console.log(e)});
+&gt; // scroll your page
+Event {isTrusted: true, type: &quot;scroll&quot;, target: document, ...}
+
+
+
+# [lemon.on](/en/api?q=lemon.on)
+# _
+# Function to add a listener for a global event
+#
+&gt; var fn = function(e) {console.log(e)}
+&gt; lemon.on(&quot;scroll&quot;, fn);
+&gt; // scroll your page
+Event {isTrusted: true, type: &quot;scroll&quot;, target: document, ...}
+Event {isTrusted: true, type: &quot;scroll&quot;, target: document, ...}
+Event {isTrusted: true, type: &quot;scroll&quot;, target: document, ...}
+...
+
+
+
+# [lemon.off](/en/api?q=lemon.off)
+# _
+# Function to remove a listener for a global event
+&gt; lemon.off(&quot;scroll&quot;, fn);
+&gt; // scroll your page
+
+
+
+# [lemon.emit](/en/api?q=lemon.emit)
+# _
+# Function to emit a global event
+&gt; lemon.emit(&quot;user-logged-in&quot;);
+
+
+
+# [lemon.on(&#39;scroll&#39;)](/en/api?q=lemon.on/scroll)
+# _
+# A listener for window scrolling is available for listening to.
+&gt; lemon.on(&quot;scroll&quot;, function(e){});
+
+
+
+# [lemon.on(&#39;resize&#39;)](/en/api?q=lemon.on/resize)
+# _
+# A listener for window resizing is available for listening to.
+&gt; lemon.on(&quot;resize&quot;, function(e){});
+
+
+
+# [lemon.on(&#39;url_change&#39;)](/en/api?q=lemon.on/url_change)
+# _
+# Listener for history pushState/replaceState and window popstate
+&gt; lemon.on(&quot;url_change&quot;, function(e){});
+
+</code></pre>
+<h1><a href="/en/api?q=lemoncup">Lemoncup</a></h1>
+<pre><code class="language-coffeescript">
+
+# [lemoncup.render](/en/api?q=lemoncup.render)
+# _
+# Function for rendering a template. Supports basic
+# coffeescript templating, as well as lemon special features
+# for classes, styles, data binding, and event handling
+&gt; var template = function(){
+    div(&#39;.button&#39;, function(){
+      text(&#39;click me&#39;)
+    })
+  }
+&gt; lemoncup.render(template)
+&quot;&lt;div class=&quot;.button&quot;&gt;click me&lt;/div&gt;&quot;
+
+&gt; var template = function(){
+    div({$click: function(){
+      console.log(&#39;on click&#39;)}
+    }, function(){
+      text(&#39;click me&#39;)
+    })
+  }
+&gt; lemoncup.render(template)
+&quot;&lt;div lemon-on:click=&quot;59&quot;&gt;click me&lt;/div&gt;&quot;
+
+&gt; lemoncup._data[59]
+ƒ (){ console.log(&#39;on click&#39;) }
+
+
+</code></pre>
+<hr>
+<h1>Still have questions?</h1>
+<p>Visit our <a href="/en/how-to">How To</a> for code samples of common questions.</p>
+</div></div></div></div></div><div id="footer" class="" lemon-component="site.Footer" lemon-data="10"><div class=" lui-footer" lemon-component="lui.Footer" lemon-contents="11" lemon-data="12"><div>Released under the MIT License</div><div>Copyright © 2018 Shenzhen239</div><div><a href="https://icons8.com">Icon pack by Icons8</a></div><div style="display: none"><a href="/zh"><img src="https://png.icons8.com/office/40/000000/china.png" /></a><a href="/fr"><img src="https://png.icons8.com/office/40/000000/france.png" /></a><a href="/en"><img src="https://png.icons8.com/office/40/000000/usa.png" /></a></div></div></div></div>
+<script type='text/javascript' src='/bundle/3d9ba4e3e584d06b33bc09d24463c55db4d901b0.js'></script></body></html>

@@ -1,0 +1,21 @@
+{
+  "name": "www.lemonjs.org",
+  "version": "1.0.0",
+  "description": "Lemon.js documentation website",
+  "author": "shenzhen239 <support@shenzhen239.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/lemon/www.lemonjs.org.git"
+  },
+  "scripts": {
+    "build": "lemon build",
+    "deploy": "lemon deploy",
+    "dev": "lemon dev",
+    "run": "lemon run"
+  },
+  "dependencies": {
+    "lemonjs-i8c": "file:../../lemonjs-i8c",
+    "lemonjs-lui": "file:../../lemonjs-lui"
+  }
+}

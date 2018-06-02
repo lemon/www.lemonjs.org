@@ -1,0 +1,20 @@
+{
+  name: "Lemonjs.org"
+  prod: {
+    hostname: 'www.lemonjs.org'
+  }
+  dev: {
+    port: 3000
+  }
+  packages: [
+    "lemonjs-lui"
+    'lemonjs-i8c'
+  ]
+  deploy: {
+    service: 'github'
+  }
+  styles: {
+    lui_link_color: '#5E58AE'
+    lui_button_color: '#5f57ad'
+  }
+}
